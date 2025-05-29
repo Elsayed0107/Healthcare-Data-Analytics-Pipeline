@@ -1,160 +1,158 @@
-Healthcare-Data-Analytics-Pipeline
+# 🚑 Healthcare Data Analytics Pipeline
 
-Purpose
+## 📌 Purpose
 
-This project aims to build a scalable big data pipeline for processing and analyzing clinical data from the MIMIC-III demo dataset. The pipeline supports batch analytics using MapReduce and Hive, and focuses on extracting key insights like average patient age, gender distribution, ICU readmission trends, length of stay, mortality rates, and more.
+This project builds a **scalable Big Data pipeline** to process and analyze clinical data from the **MIMIC-III demo dataset**. The pipeline supports both **batch analytics** using **MapReduce** and **Apache Hive**, and aims to extract vital healthcare insights including:
 
-It leverages core big data technologies such as HDFS, Hadoop MapReduce, Hive, and Pandas-based preprocessing to prepare the data for efficient analysis and exploration.
+- Average patient age.
+- Gender distribution.
+- ICU readmission trends.
+- Length of stay.
+- Mortality rates.
+- Top prescriptions and procedures.
+- Changes in vital signs during ICU stays.
 
-Objectives
+## 🎯 Objectives
 
-Extract raw healthcare data from MIMIC-III demo CSV files.
+- ✅ Extract raw healthcare data from MIMIC-III CSV files.
+- ✅ Clean and preprocess the data using **Python & Pandas**.
+- ✅ Convert cleaned CSV files to **Parquet** format using **PySpark**.
+- ✅ Store data in **HDFS** inside a Dockerized Hadoop environment.
+- ✅ Create **Hive external tables** on top of Parquet files.
+- ✅ Perform analytics using **Hive SQL** and **Java-based MapReduce**.
 
-Clean and preprocess data using Python & Pandas.
+---
 
-Convert cleaned CSVs to Parquet format using PySpark.
+## 🔁 Pipeline Overview
+CSV (raw)
+↓
+Cleaning via Python (Pandas)
+↓
+Parquet Conversion (PySpark)
+↓
+Storage in HDFS
+↓
+Hive External Tables
+↓
+Analytics via Hive SQL + Java MapReduce
+---
 
-Store Parquet files in HDFS (via Dockerized Hadoop environment).
+## 📂 Datasets Used (from MIMIC-III Demo)
 
-Create Hive external tables on top of Parquet files.
+- `PATIENTS.csv`
+- `ADMISSIONS.csv` 
+- `DIAGNOSES_ICD.csv` 
+- `PROCEDURES_ICD.csv` 
+- `PRESCRIPTIONS.csv` 
+- `LABEVENTS.csv` 
+- `CHARTEVENTS.csv`
+- `ICUSTAYS.csv`
 
-Perform analytics via Hive queries and Java-based MapReduce.
+---
 
-Pipeline Overview
+## 🧹 Data Cleaning & Transformation
 
-Data Extraction
+**Scripts used:**
 
-Raw MIMIC-III CSV files used:
+- `clean_patients.py`.
+- `convert_csv_to_parquet.py`.
+- `convert_parquet_to_csv.py`.
 
-PATIENTS.csv
+**Cleaning tasks:**
 
-ADMISSIONS.csv
+- Remove rows with all null values.
+- Normalize date formats and timestamps. 
+- Encode categorical fields like gender.
+- Fill or flag missing values appropriately.
+- Convert cleaned data to efficient **Parquet** format.
 
-DIAGNOSES_ICD.csv
+---
 
-PROCEDURES_ICD.csv
+## 📦 Data Storage
 
-PRESCRIPTIONS.csv
+All data is stored in **HDFS**, organized as:
 
-LABEVENTS.csv
+- `/user/mimic/input_clean/` → Cleaned CSVs. 
+- `/user/mimic/parquet/` → Parquet files.
 
-CHARTEVENTS.csv
+HDFS runs within a **Dockerized Hadoop** environment for easy deployment and testing.
 
-ICUSTAYS.csv
+---
 
-Data Cleaning and Transformation
+## 🐝 Hive Integration
 
-Python scripts were used to:
+External **Hive tables** were created over the Parquet files using the `create_hive_tables.sql` script.
 
-Drop rows with all nulls.
+📄 Location: `sql/create_hive_tables.sql`
 
-Normalize date formats and handle missing timestamps.
+---
 
-Encode gender and handle unknown values.
+## 📊 Analytics
 
-Fill missing expiration flags appropriately.
+### 🔎 Hive SQL Queries (in `queries.sql`)
 
-Convert to efficient Parquet format.
+1. Average length of stay per diagnosis. 
+2. ICU readmission distribution.
+3. Mortality rates by age and gender (filtered to age ≤ 85). 
+4. ICU length of stay per diagnosis.
+5. Relationship between age, length of stay, and mortality. 
+6. Top prescribed drugs per diagnosis. 
+7. Vital signs trend over days of ICU stay. 
 
-Scripts used:
+📁 Results saved to: `results/output_host/`
 
-clean_patients.py
+---
 
-convert_csv_to_parquet.py
+### ☕ Java MapReduce Jobs
 
-convert_parquet_to_csv.py
+**Location:** `mapreduce/patient_stats/PatientStats.java` 
+**Output file:** `mapreduce/result/part-r-00000`
 
-Data Storage (HDFS)
+Calculated:
 
-All cleaned datasets (Parquet and CSV) are stored in HDFS inside a Dockerized Hadoop environment.
+- **Average patient age** 
+- **Gender distribution** (number of male and female patients)
 
-HDFS paths follow: /user/mimic/parquet/ and /user/mimic/input_clean/
+---
 
-Hive Table Creation
+## ⚙️ Technologies Used
 
-External Hive tables were created for all 8 datasets using scripts in the hive/ directory. Tables are defined on Parquet formats.
+- **Python** (Pandas, PyArrow) 
+- **PySpark** 
+- **Java** (MapReduce) 
+- **Apache Hadoop** (HDFS + YARN) 
+- **Apache Hive** 
+- **Docker** 
+- **Ubuntu 22.04**
 
-Analytics
+---
 
-SQL-based Hive queries were used to explore:
-
-1- Average length of stay per diagnosis
-2- ICU readmission distribution
-3- Mortality rates by age and gender (filtered to age <= 85)
-4- ICU length of stay per diagnosis
-5- Relationship between age, length of stay, and mortality 
-6- Top prescribed drugs per diagnosis
-7- Vital signs over days of stay
-
-Java-based MapReduce job calculates:
-
-Average patient age
-
-Gender distribution (number of male and female patients)
-
-📌 Data Pipeline Architecture
-
-CSV (raw) → Cleaning via Python → Parquet → HDFS → Hive External Tables → Hive SQL + MapReduce → Analytics Outputs
-
-Technologies Used
-
-Python (Pandas, PyArrow)
-
-PySpark
-
-Java (for MapReduce)
-
-Ubuntu 22.04
-
-Hadoop (HDFS + YARN)
-
-Apache Hive
-
-Docker
-Project Structure
+## 📁 Project Structure
 healthcare-project/
 ├── database/
-│   ├── parquet/
-│   │   ├── ADMISSIONS.parquet
-│   │   ├── DIAGNOSES_ICD.parquet
-│   │   ├── ICUSTAYS.parquet
-│   │   ├── LABEVENTS.parquet
-│   │   ├── CHARTEVENTS.parquet
-│   │   ├── PRESCRIPTIONS.parquet
-│   │   ├── PROCEDURES_ICD.parquet
-│   │   └── PATIENTS.parquet
-│   ├── ADMISSIONS.csv
-│   ├── DIAGNOSES_ICD.csv
-│   ├── ICUSTAYS.csv
-│   ├── LABEVENTS.csv
-│   ├── CHARTEVENTS.csv
-│   ├── PRESCRIPTIONS.csv
-│   ├── PROCEDURES_ICD.csv
-│   └── PATIENTS.csv
+│ ├── parquet/
+│ ├── *.csv
 ├── mapreduce/
-│   ├── patient_stats/
-│   │   └── PatientStats.java
-│   └── result/
-│       └── part-r-00000
+│ ├── patient_stats/
+│ └── result/
 ├── sql/
-│   ├── create_hive_tables.sql
-│   └── queries.sql
+│ ├── create_hive_tables.sql
+│ └── queries.sql
 ├── results/
-│   └── output_host/
-│       ├── query1_result.txt
-│       ├── query2_result.txt
-│       ├── query3_result.txt
-│       ├── query4_result.txt
-│       ├── query5_result.txt
-│       ├── query6_result.txt
-│       └── query7_result.txt
+│ └── output_host/
 ├── scripts/
-│   ├── clean_patients.py
-│   ├── convert_csv_to_parquet.py
-│   └── convert_parquet_to_csv.py
+│ ├── clean_patients.py
+│ ├── convert_csv_to_parquet.py
+│ └── convert_parquet_to_csv.py
 ├── Docs/
-│   └── USER_MANUAL.md
+│ └── USER_MANUAL.md
 ├── README.md
-Contact
-Name: El-Sayed Ehab
+
+---
+
+## 📞 Contact
+
+Name: El-Sayed Ehab 
 Email: elsayed.ehab0107@gmail.com
+
+---
